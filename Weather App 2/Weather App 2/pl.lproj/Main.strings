@@ -1,0 +1,24 @@
+
+/* Class = "UILabel"; text = "Third View"; ObjectID = "4xo-w4-Gwa"; */
+"4xo-w4-Gwa.text" = "Third View";
+
+/* Class = "UIViewController"; title = "weatherForecastView"; ObjectID = "8rJ-Kc-sve"; */
+"8rJ-Kc-sve.title" = "weatherForecastView";
+
+/* Class = "UIViewController"; title = "mapWithSearchView"; ObjectID = "9pv-A4-QxB"; */
+"9pv-A4-QxB.title" = "mapWithSearchView";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "CvL-L1-Xx7"; */
+"CvL-L1-Xx7.normalTitle" = "Button";
+
+/* Class = "UIViewController"; title = "favoritesView"; ObjectID = "MGH-5w-ZMy"; */
+"MGH-5w-ZMy.title" = "favoritesView";
+
+/* Class = "UILabel"; text = "Loaded by WeatherForecastViewController"; ObjectID = "NDk-cv-Gan"; */
+"NDk-cv-Gan.text" = "Loaded by WeatherForecastViewController";
+
+/* Class = "UILabel"; text = "Loaded by FavoritesViewController"; ObjectID = "kiK-uU-kCj"; */
+"kiK-uU-kCj.text" = "Loaded by FavoritesViewController";
+
+/* Class = "UILabel"; text = "Second View"; ObjectID = "zEq-FU-wV5"; */
+"zEq-FU-wV5.text" = "Second View";
