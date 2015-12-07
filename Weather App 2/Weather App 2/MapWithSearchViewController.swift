@@ -44,6 +44,10 @@ class MapWithSearchViewController: UIViewController, UITextFieldDelegate, UIGest
     
     let fadeTransitionDuration = 0.4;
     
+    var touchedPoint = CLLocationCoordinate2D();
+    
+    var locationChangedByTouch = false;
+    
     var city: City?;
     
     //init weather service
@@ -90,13 +94,9 @@ class MapWithSearchViewController: UIViewController, UITextFieldDelegate, UIGest
     func getWeatherForTouchedPlace(gestureRecognizer:UIGestureRecognizer){
         let touchPoint = gestureRecognizer.locationInView(self.mapView);
         let newCoordinates = mapView.convertPoint(touchPoint, toCoordinateFromView: self.mapView);
-        self.mapView.removeAnnotations(mapAnnotations);
-        self.mapAnnotations.removeAll();
-        let annotation = MKPointAnnotation();
-        annotation.coordinate = newCoordinates;
-        self.mapAnnotations.append(annotation);
-        self.mapView.addAnnotations(mapAnnotations);
-        self.weatherService.getWeather(annotation.coordinate.latitude, longitude: annotation.coordinate.longitude);
+        self.touchedPoint = newCoordinates;
+        self.locationChangedByTouch = true;
+        self.weatherService.getWeather(newCoordinates.latitude, longitude: newCoordinates.longitude);
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -121,8 +121,6 @@ class MapWithSearchViewController: UIViewController, UITextFieldDelegate, UIGest
         descriptionLabel.fadeTransition(fadeTransitionDuration);
         descriptionLabel.text = weather.weatherDescription;
         self.weatcherStateIcon.image = weather.weatherIcon;
-        print(weather.weatherIcon.size);
-        
     }
     
     func setCity(city: City!) {
@@ -130,11 +128,33 @@ class MapWithSearchViewController: UIViewController, UITextFieldDelegate, UIGest
         self.city = city;
         cityLabel.fadeTransition(fadeTransitionDuration);
         cityLabel.text = self.city!.cityName;
-        
+    
         if Utility.isConnectedToNetwork() {
-            let center = CLLocationCoordinate2D(latitude: city.latitude, longitude: city.longitude);
-            let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1));
+            var center : CLLocationCoordinate2D;
+            var span : MKCoordinateSpan;
+            var annotationCoordinates: CLLocationCoordinate2D;
+            if(locationChangedByTouch){
+                span = MKCoordinateSpan(latitudeDelta: self.mapView.region.span.longitudeDelta, longitudeDelta: self.mapView.region.span.latitudeDelta);
+                center = CLLocationCoordinate2D(latitude: self.touchedPoint.latitude + (span.latitudeDelta / 10), longitude: self.touchedPoint.longitude);
+                annotationCoordinates = CLLocationCoordinate2D(latitude: self.touchedPoint.latitude, longitude: self.touchedPoint.longitude);
+            }
+            else{
+                span = MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1);
+                center = CLLocationCoordinate2D(latitude: city.latitude + (span.latitudeDelta / 10), longitude: city.longitude);
+                annotationCoordinates = CLLocationCoordinate2D(latitude: city.latitude, longitude: city.longitude);
+            }
+            let region = MKCoordinateRegion(center: center, span: span);
             self.mapView.setRegion(region, animated: true);
+            
+            //add annotation icon representing this city
+            self.mapView.removeAnnotations(mapAnnotations);
+            self.mapAnnotations.removeAll();
+            let annotation = MKPointAnnotation();
+            annotation.coordinate = annotationCoordinates;
+            self.mapAnnotations.append(annotation);
+            self.mapView.addAnnotations(mapAnnotations);
+            
+            self.locationChangedByTouch = false;
         }
         else {
             self.noInternetConnectionAlert();
